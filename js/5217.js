@@ -447,9 +447,11 @@ function notify(type, remainingMinutes) {
       } else {
         var options = {
           icon: 'images/icon.png',
-          body: remainingMinutes + " minutes left - " + chooseBreakMessage(),
+          body: remainingMinutes + " minutes left - " + chooseBreakMessage()
         };
         var notification = new Notification('Time for a break', options);
+        var audio = new Audio('');
+        audio.play();
         notification.onclick = function() {
           window.focus();
           notification.close();
@@ -461,9 +463,11 @@ function notify(type, remainingMinutes) {
       } else {
         var options = {
           icon: 'images/icon.png',
-          body: remainingMinutes + " minutes left in this cycle",
+          body: remainingMinutes + " minutes left in this cycle"
         };
         var notification = new Notification('Keep working!', options);
+        var audio = new Audio('');
+        audio.play();
         notification.onclick = function() {
           window.focus();
           notification.close();
