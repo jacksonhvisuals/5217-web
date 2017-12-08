@@ -450,7 +450,7 @@ function notify(type, remainingMinutes) {
           body: remainingMinutes + " minutes left - " + chooseBreakMessage()
         };
         var notification = new Notification('Time for a break', options);
-        var audio = new Audio('');
+        var audio = new Audio('end_work.wav');
         audio.play();
         notification.onclick = function() {
           window.focus();
@@ -466,7 +466,7 @@ function notify(type, remainingMinutes) {
           body: remainingMinutes + " minutes left in this cycle"
         };
         var notification = new Notification('Keep working!', options);
-        var audio = new Audio('');
+        var audio = new Audio('end_break.wav');
         audio.play();
         notification.onclick = function() {
           window.focus();
