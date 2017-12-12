@@ -411,44 +411,44 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-function checkIfMobile() {
-  if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
-    return true;
-  } else {
-    return false;
-  }
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js')
+  .then(function(registration) {
+    console.log('Service worker successfully registered.');
+  })
+  .catch(function(err) {
+    console.error('Unable to register service worker.', err);
+  });
 }
 
 function notify(type, remainingMinutes) {
-  if (!checkIfMobile()) {
-    if (type === "break") {
-      if (Notification.permission !== "granted") {
-        Notification.requestPermission();
-      } else {
-        var options = {
+  if (type === "break") {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    } else {
+      navigator.serviceWorker.ready.then(function(registration) {
+        registration.showNotification('Time for a break', {
           icon: 'images/icon.png',
+          badge: 'images/ic_notif_white.png',
           body: remainingMinutes + " minutes left - " + chooseBreakMessage(),
-        };
-        var notification = new Notification('Time for a break', options);
-        notification.onclick = function() {
-          window.focus();
-          notification.close();
-        }
-      }
-    } else if (type === "work") {
-      if (Notification.permission !== "granted") {
-        Notification.requestPermission();
-      } else {
-        var options = {
+          tag: 'notification',
+          renotify: true
+        });
+      });
+    }
+  } else if (type === "work") {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    } else {
+      navigator.serviceWorker.ready.then(function(registration) {
+        registration.showNotification('Keep working!', {
           icon: 'images/icon.png',
+          badge: 'images/ic_notif_white.png',
           body: remainingMinutes + " minutes left in this cycle",
-        };
-        var notification = new Notification('Keep working!', options);
-        notification.onclick = function() {
-          window.focus();
-          notification.close();
-        }
-      }
+          tag: 'notification',
+          renotify: true
+        });
+      });
     }
   }
 }
