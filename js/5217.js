@@ -442,32 +442,33 @@ if ('serviceWorker' in navigator) {
 }
 
 function notify(type, remainingMinutes) {
+  let sendNotification = document.getElementById("notification").checked;
+  let silent = document.getElementById("silent").checked;
+  let option = {
+    icon: 'images/icon.png',
+    badge: 'images/ic_notif_white.png',
+    tag: 'notification',
+    renotify: true
+  };
+  
+  silent ? option.silent = true : option.silent = false;
+
   if (type === "break") {
     if (Notification.permission !== "granted") {
       Notification.requestPermission();
-    } else {
+    } else if (sendNotification) {
+      option.body = remainingMinutes + " minutes left - " + chooseBreakMessage();
       navigator.serviceWorker.ready.then(function(registration) {
-        registration.showNotification('Time for a break', {
-          icon: 'images/icon.png',
-          badge: 'images/ic_notif_white.png',
-          body: remainingMinutes + " minutes left - " + chooseBreakMessage(),
-          tag: 'notification',
-          renotify: true
-        });
+        registration.showNotification('Time for a break', option);
       });
     }
   } else if (type === "work") {
     if (Notification.permission !== "granted") {
       Notification.requestPermission();
-    } else {
+    } else if (sendNotification) {
+      option.body = remainingMinutes + " minutes left in this cycle";
       navigator.serviceWorker.ready.then(function(registration) {
-        registration.showNotification('Keep working!', {
-          icon: 'images/icon.png',
-          badge: 'images/ic_notif_white.png',
-          body: remainingMinutes + " minutes left in this cycle",
-          tag: 'notification',
-          renotify: true
-        });
+        registration.showNotification('Keep working!', option);
       });
     }
   }

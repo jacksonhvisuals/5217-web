@@ -69,10 +69,13 @@
     <div class="row">
       <div class="container">
         <div class="col s12">
-          <div class="fixed-action-btn threeDots">
-            <a class="material-icons dropdown-button modal-trigger" id="moreButton1" href="#about-modal">info_outline</a>
+          <div class="btn-flat threeDots">
+            <a class="material-icons dropdown-button" id="moreButton1" data-activates='dropdown1'>more_horiz</a>
           </div>
-
+          <ul id='dropdown1' class='dropdown-content'>
+            <li><a href="#options-modal" class="modal-trigger">Options</a></li>
+            <li><a id="about" href="#about-modal" class="about modal-trigger">About</a></li>
+          </ul>
           <div class="fixed-action-btn">
             <button class="mdc-fab material-icons" id="timerfab1" aria-label="Start">
               <img class="fabicon fabimage" src="images/ic_5217.svg" alt="5217 icon">
@@ -113,9 +116,13 @@
     <div class="row">
       <div class="container">
         <div class="col s12">
-          <div class="fixed-action-btn threeDots">
-            <i class="material-icons dropdown-button modal-trigger" id="moreButton2">info_outline</i>
+          <div class="btn-flat threeDots">
+            <a class="material-icons dropdown-button" id="moreButton2" data-activates='dropdown2'>more_horiz</a>
           </div>
+          <ul id='dropdown2' class='dropdown-content'>
+            <li><a href="#options-modal" class="modal-trigger">Options</a></li>
+            <li><a href="#about-modal" class="about modal-trigger">About</a></li>
+          </ul>
           <div class="fixed-action-btn">
             <button class="mdc-fab material-icons" id="timerfab2" aria-label="Start">
               <img class="fabicon fabimage" src="images/ic_5217.svg" alt="5217 icon">
@@ -162,6 +169,28 @@
     </div>
     <div class="mdc-dialog__backdrop"></div>
   </aside>
+  <div id="options-modal" class="modal">
+    <div class="modal-content center">
+      <h4>Notification</h4>
+      <div class="switch">
+        <label>
+          off
+          <input id="notification" checked type="checkbox">
+          <span class="lever"></span>
+          on
+        </label>
+      </div>
+      <h4>Silent</h4>
+      <div class="switch">
+        <label>
+          off
+          <input id="silent" type="checkbox">
+          <span class="lever"></span>
+          on
+        </label>
+      </div>
+    </div>
+  </div>
   <!--Import jQuery before materialize.js-->
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <script type="text/javascript" src="js/materialize.min.js"></script>
@@ -173,6 +202,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       $('.modal').modal();
+      $('.dropdown-button').dropdown();
     });
     const MDCDialog = mdc.dialog.MDCDialog;
     const MDCDialogFoundation = mdc.dialog.MDCDialogFoundation;
@@ -187,11 +217,7 @@
       console.log('canceled');
     })
 
-    document.querySelector('#moreButton1').addEventListener('click', function(evt) {
-      dialog.lastFocusedTarget = evt.target;
-      dialog.show();
-    })
-    document.querySelector('#moreButton2').addEventListener('click', function(evt) {
+    $('.about').click(function(evt) {
       dialog.lastFocusedTarget = evt.target;
       dialog.show();
     })

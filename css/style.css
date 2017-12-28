@@ -19,6 +19,13 @@ body {
 .threeDots {
   left: calc(35% - 28px);
   bottom: 35px;
+  position: fixed;
+  padding: 0;
+  z-index: 998;
+}
+
+.dropdown-button {
+  padding-top: 7px;
 }
 
 .killButton {
