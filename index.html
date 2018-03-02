@@ -81,7 +81,7 @@
 
             <div class="mdc-menu mdc-simple-menu--open-from-bottom-left" tabindex="-1" style="z-index: 293847;">
               <ul class="mdc-menu__items mdc-list" role="menu" aria-hidden="true">
-                <li class="mdc-list-item" role="menuitem" tabindex="0" id="settings-dialog-trigger" href="#settings-modal">
+                <li class="mdc-list-item" role="menuitem" tabindex="0" id="settings-dialog-trigger" href="#settings-modal" onclick="showSettings()">
                   Options
                 </li>
                 <li class="mdc-list-item modal-trigger" role="menuitem" tabindex="0" id="about-dialog-trigger" href="#about-modal">
@@ -121,6 +121,14 @@
       </header>
       <section id="settings-dialog-description" class="mdc-dialog__body">
         <ul class="mdc-list mdc-list--non-interactive">
+          <li class="mdc-list-item settingslist">
+            Work time
+            <input class="validate" id="work-time" type="number" min="1" max="720">
+          </li>
+          <li class="mdc-list-item settingslist">
+            Break time
+            <input class="validate" id="break-time" type="number" min="1" max="720">
+          </li>
           <li class="mdc-list-item settingslist">
             Notification
             <div class="switch mdc-list-item__end-detail">

@@ -9,24 +9,22 @@
 */
 
 const second = 60000;
-
-const worktime = 52;
-const breaktime = 17;
-
 const originalTitle = document.title;
 
 /*
   Variables
 */
 
-var startTimeStamp;
-var endTimeStamp;
-var minutesAwayStamp;
-var currentTimeStamp;
+var worktime = 52;
+var breaktime = 17;
 var placeHolderTime;
 var currentCycle;
 var notificationSetting;
 var soundSetting;
+var startTime = 0;
+var currentTime = 0;
+var endTime = 0;
+var minutesAway = 0;
 
 // A literal ARRAY of colors. Ha!
 var workColors = ["#238aff", "#278cff", "#2c8fff", "#3091ff", "#3493ff", "#3996ff", "#3d98ff", "#419aff", "#469cff", "#4a9fff", "#4ea1ff", "#53a3ff", "#57a6ff", "#5ba8ff", "#60aaff", "#64adff", "#68afff", "#6db1ff", "#71b4ff", "#75b6ff", "#7ab8ff", "#7ebaff", "#82bdff", "#87bfff", "#8bc1ff", "#8fc4ff", "#94c6ff", "#98c8ff", "#9ccbff", "#a1cdff", "#a5cfff", "#a9d1ff", "#aed4ff", "#b2d6ff", "#b6d8ff", "#bbdbff", "#bfddff", "#c3dfff", "#c8e2ff", "#cce4ff", "#d0e6ff", "#d5e9ff", "#d9ebff", "#ddedff", "#e2efff", "#e6f2ff", "#eaf4ff", "#eff6ff", "#f3f9ff", "#f7fbff", "#fcfdff", "#ffffff"];
@@ -65,6 +63,8 @@ var layer1DivElement = document.getElementById("layer1div");
 var layer2DivElement = document.getElementById("layer2div");
 var notificationToggleElement = document.getElementById("notificationSwitch");
 var soundToggleElement = document.getElementById("soundSwitch");
+var workTimeElement = document.getElementById("work-time")
+var breakTimeElement = document.getElementById("break-time")
 var notification;
 var sound;
 setCookies();
@@ -83,14 +83,25 @@ resetButton1Element.addEventListener("click", reset);
 */
 function setCookies() {
     if(typeof(Storage) !== "undefined") {
+        if (typeof(localStorage.worktime) === "undefined") {
+            localStorage.worktime = 52;
+        }
+        if (typeof(localStorage.breaktime) === "undefined") {
+            localStorage.breaktime = 17;
+        }
         if (typeof(localStorage.notifpref) === "undefined") {
             localStorage.notifpref = true;
         }
         if (typeof(localStorage.soundpref) === "undefined") {
             localStorage.soundpref = false;
         }
+        worktime = parseInt(localStorage.worktime, 10);
+        breaktime = parseInt(localStorage.breaktime, 10);
         notification = localStorage.notifpref;
         sound = localStorage.soundpref;
+
+        hero1Element.innerHTML = worktime;
+        hero2Element.innerHTML = worktime;
 
         if (notification === "true") {
           let checked = document.createAttribute("checked");
@@ -110,12 +121,33 @@ function setCookies() {
 }
 
 function saveSettings() {
-  notificationSetting = notificationToggleElement.checked;
-  soundSetting = soundToggleElement.checked;
-  localStorage.notifpref = notificationSetting;
-  localStorage.soundpref = soundSetting;
-  notification = localStorage.notifpref;
-  sound = localStorage.soundpref;
+  if (!timerRunning) {
+    notificationSetting = notificationToggleElement.checked;
+    soundSetting = soundToggleElement.checked;
+    localStorage.notifpref = notificationSetting;
+    localStorage.soundpref = soundSetting;
+    notification = localStorage.notifpref;
+    sound = localStorage.soundpref;
+    worktime = parseInt(workTimeElement.value, 10);
+    breaktime = parseInt(breakTimeElement.value, 10);
+    localStorage.worktime = worktime;
+    localStorage.breaktime = breaktime;
+    hero1Element.innerHTML = worktime;
+    hero2Element.innerHTML = worktime;
+  }
+}
+
+function showSettings() {
+    if (typeof(localStorage.worktime) === "undefined") {
+        workTimeElement.value = 52;
+    } else {
+        workTimeElement.value = parseInt(localStorage.worktime, 10);
+    }
+    if (typeof(localStorage.breaktime) === "undefined") {
+        breakTimeElement.value = 17;
+    } else {
+        breakTimeElement.value = parseInt(localStorage.breaktime, 10);
+    }
 }
 
 function dependentUI() {
@@ -163,7 +195,7 @@ function startTimer() {
     }
 
     getCurrentTime();
-    getMinutesAway(currentTime, endTime);
+    getMinutesAway();
     updateTimer(currentCycle);
 
     if (timerRunning && (minutesAwayRounded === 0)) {
@@ -184,7 +216,7 @@ function startNewType() {
   getStartTime();
   getEndTime(currentCycle);
   getCurrentTime();
-  getMinutesAway(currentTime, endTime);
+  getMinutesAway();
 
   updateTitle(currentCycle);
   notify(currentCycle, minutesAwayRounded);
@@ -275,14 +307,14 @@ function updateTimer(cycleType) {
   }
 
   // Run notification at 51 mins
-  if (placeHolderTime === minutesAwayRounded) return;
+  //if (placeHolderTime === minutesAwayRounded) return;
 
   updateTitle(cycleType);
 
-  switch (minutesAwayRounded) {
-    case 35:
-    case 14:
-    case 5:
+  switch (parseFloat((minutesAway / worktime).toFixed(2))) {
+    case 0.67:
+    case 0.27:
+    case 0.1:
       notify(cycleType, minutesAwayRounded);
   }
 
@@ -309,17 +341,17 @@ function getCurrentTime() {
 
 function getEndTime(cycleType) {
   if (cycleType === "work") {
-    endTime = new Date(startTime + (worktime * second)).getTime();
+    endTime = startTime + worktime * second;
     placeHolderTime = worktime;
   } else if (cycleType === "break") {
-    endTime = new Date(startTime + (breaktime * second)).getTime();
+    endTime = startTime + breaktime * second;
     placeHolderTime = breaktime;
   }
   return endTime;
 }
 
-function getMinutesAway(now, finish) {
-  minutesAway = (finish - now) / second;
+function getMinutesAway() {
+  minutesAway = (endTime - currentTime) / second;
   minutesAwayRounded = Math.ceil(minutesAway);
   return minutesAwayRounded;
 }
@@ -342,9 +374,11 @@ function getLayerOrder() {
 
 function setMinuteColors(cycleType) {
   getLayerOrder();
-  (f === 1 ? layer1DivElement : layer2DivElement).style.backgroundColor = workColors[Math.abs(worktime - minutesAwayRounded)];
-  (r === 1 ? layer1DivElement : layer2DivElement).style.backgroundColor = workColors[Math.abs(worktime - minutesAwayRounded) + 1];
-  if (minutesAwayRounded === 30) {
+  let colorIndex = parseInt((1 - minutesAway / worktime) * 52, 10);
+  let reverseColorIndex = parseInt((minutesAway / worktime) * 52, 10);
+  (f === 1 ? layer1DivElement : layer2DivElement).style.backgroundColor = workColors[colorIndex];
+  (r === 1 ? layer1DivElement : layer2DivElement).style.backgroundColor = workColors[colorIndex + 1];
+  if (parseFloat((minutesAway / worktime).toFixed(2)) == 0.58) {
     hero1Element.style.color = "#237aff";
     hero2Element.style.color = "#237aff";
     resetButton1Element.style.color = "#237aff";

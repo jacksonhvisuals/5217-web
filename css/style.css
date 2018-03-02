@@ -94,6 +94,13 @@ body {
   }
 }
 
+@media screen and (min-width: 450px) {
+  .mdc-dialog__surface{
+    width: 35%;
+    min-width: unset;
+  }
+}
+
 #breakMessage1, #breakMessage2 {
   font-size: 25px;
   font-weight: 400;
@@ -210,6 +217,10 @@ a {
 .switch label input[type=checkbox]:checked+.lever:after {
     background-color: #237aff !important;
 }
+
+input {
+  width: auto !important;
+}
 /* Diable highlighting of FAB & buttons on mobile */
 
 .timerfab, .sharefab, .killButton, .moreButton {
@@ -223,7 +234,7 @@ a {
   font-size: 1rem !important;
 }
 
-#about-dialog {
+#about-dialog, #settings-dialog {
   z-index: 5217;
 }
 
