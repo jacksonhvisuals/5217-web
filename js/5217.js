@@ -375,8 +375,10 @@ function getLayerOrder() {
 function setMinuteColors(cycleType) {
   getLayerOrder();
   let colorIndex = parseInt((1 - minutesAway / worktime) * 52, 10);
+  let reverseColorIndex = parseInt((minutesAway / worktime) * 52, 10);
   (f === 1 ? layer1DivElement : layer2DivElement).style.backgroundColor = workColors[colorIndex];
   (r === 1 ? layer1DivElement : layer2DivElement).style.backgroundColor = workColors[colorIndex + 1];
+  $(".reverseColor").css("color", workColors[reverseColorIndex]);
   if (minutesAwayRounded === 30) {
     hero1Element.style.color = "#237aff";
     hero2Element.style.color = "#237aff";
